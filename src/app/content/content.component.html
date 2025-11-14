@@ -1,0 +1,245 @@
+<div class="main-toast">
+  <div
+    class="toast position-fixed top-0 end-0 m-3 index-4 style-toast"
+    role="alert"
+    [class.show]="showToast"
+  >
+    <div
+      class="toast-header bg-success text-white"
+      [ngClass]="{
+        'bg-success': toastType === 'success',
+        'bg-danger': toastType === 'error',
+        'bg-warning': toastType === 'edit'
+      }"
+    >
+      <strong class="me-auto text-center">{{ toastMessage }}</strong>
+    </div>
+  </div>
+</div>
+
+<div class="main-bg">
+  <app-navbar></app-navbar>
+  <div class="main-content">
+    <div class="user-head">
+      <h5 class="font-weight-bold">ผู้ใช้งาน</h5>
+      <p>-</p>
+    </div>
+    <div class="table-content">
+      <nz-table #jakkarinTable [nzData]="datalist" nzBordered [nzPageSize]="5">
+        <thead>
+          <tr>
+            <th class="text-center font-weight-bold">ลำดับ</th>
+            <th class="text-center font-weight-bold">รหัสผู้ใช้งาน</th>
+            <th class="text-center font-weight-bold">ชื่อ-นามสกุล</th>
+            <th class="text-center font-weight-bold">วันเกิด</th>
+            <th class="text-center font-weight-bold">อายุ</th>
+            <th class="text-center font-weight-bold">เพศ</th>
+            <th class="text-center font-weight-bold">วันที่บันทึก</th>
+            <th class="text-center font-weight-bold">บันทึกโดย</th>
+            <th class="text-center">
+              <button
+                type="button"
+                class="btn btn-success text-white mr-2"
+                (click)="openModal()"
+              >
+                <i class="fa fa-plus"></i>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of jakkarinTable.data;let i = index;">
+            <td class="text-center">{{ i + 1 + (jakkarinTable.nzPageIndex - 1) * jakkarinTable.nzPageSize }}</td>
+            <td class="text-center">{{ data.userPass }}</td>
+            <td class="text-center">  
+              {{ data.firstName + " " + data.lastName }}
+            </td>
+            <td class="text-center">{{ data.birth }}</td>
+            <td class="text-center">{{ data.age }}</td>
+            <td class="text-center">{{ data.sex }}</td>
+            <td class="text-center">{{ data.saveTime }}</td>
+            <td class="text-center">{{ data.saveUserBy }}</td>
+            <td>
+              <div class="text-center">
+                <button
+                  type="button"
+                  class="btn btn-warning text-white mr-2"
+                  (click)="editUser(data.id)"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger text-white"
+                  (click)="openDeleteModal(data.id)"
+                >
+                  Del
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+
+    <div bsModal #jakkarin="bs-modal" class="modal fade">
+      <div class="modal-dialog modal-width">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-white">
+              {{
+                editingUserId
+                  ? "แก้ไขข้อมูลผู้ใช้งาน"
+                  : "กรุณากรอกข้อมูลผู้ใช้งาน"
+              }}
+            </h5>
+            <button
+              type="button"
+              class="close"
+              aria-label="Close"
+              (click)="closeModal()"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #userForm="ngForm" (ngSubmit)="saveUser(userForm)">
+              <div class="two-content">
+                <div class="field">
+                  <label>ชื่อ</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    [(ngModel)]="firstName"
+                    name="firstName"
+                    required
+                  />
+                  <div
+                    *ngIf="firstName?.length === 0 && submitted"
+                    class="text-danger"
+                  >
+                    <small>*กรุณากรอกชื่อ</small>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>นามสกุล</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    [(ngModel)]="lastName"
+                    name="lastName"
+                    required
+                  />
+                  <div
+                    *ngIf="lastName?.length === 0 && submitted"
+                    class="text-danger"
+                  >
+                    <small>*กรุณากรอกนามสกุล</small>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>วันเกิด</label>
+                  <input
+                    name="birth"
+                    [(bsValue)]="date1"
+                    [(ngModel)]="birth"
+                    type="text"
+                    placeholder="DD/MM/YYYY"
+                    class="form-control"
+                    bsDatepicker
+                    required
+                  />
+                  <div
+                    *ngIf="date1?.length === 0 && submitted"
+                    class="text-danger"
+                  >
+                    <small>*กรุณาเลือกวันเกิด</small>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>อายุ</label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    [(ngModel)]="age"
+                    name="age"
+                    [value]="date1 | ageDate"
+                    readonly
+                  />
+                </div>
+
+                <div class="field full">
+                  <label>เพศ</label>
+                  <select
+                    class="form-control"
+                    [(ngModel)]="sex"
+                    name="sex"
+                    required
+                  >
+                    <option value="" disabled selected>กรุณาเลือกเพศ</option>
+                    <option value="ชาย">ชาย</option>
+                    <option value="หญิง">หญิง</option>
+                    <option value="ไม่ระบุ">ไม่ระบุ</option>
+                  </select>
+                  <div *ngIf="!sex && submitted" class="text-danger">
+                  <small>*กรุณาเลือกเพศ</small>
+                </div>
+                </div>
+              </div>
+              <div class="modal-footers mt-3">
+                <button
+                  type="submit"
+                  class="btn text-white mr-2"
+                  [ngClass]="editingUserId ? 'btn-warning' : 'btn-primary'"
+                >
+                  {{ editingUserId ? "บันทึกการแก้ไข" : "เพิ่มผู้ใช้" }}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="closeModal()"
+                >
+                  ยกเลิก
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal ยืนยันการลบ -->
+    <div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title text-white">ยืนยันการลบ</h5>
+            <button type="button" class="close" (click)="closeDeleteModal()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>คุณแน่ใจว่าจะลบผู้ใช้นี้หรือไม่?</p>
+            <button
+              type="button"
+              class="btn btn-secondary mr-3"
+              (click)="closeDeleteModal()"
+            >
+              ยกเลิก
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="confirmDelete()"
+            >
+              ลบ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

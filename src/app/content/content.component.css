@@ -1,0 +1,89 @@
+.main-bg{
+  /* border: 1px solid red; */
+  background-color: rgb(64, 63, 63,.1);
+}
+.main-content {
+  /* border: 1px solid red; */
+  margin: 1rem;
+  padding: 1rem;
+  box-shadow: 0px 4px 2px rgb(88, 210, 251) inset;
+  background-color: white;
+}
+.main-content .user-head {
+  /* border: 1px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: gray;
+  margin-bottom: 0.5rem;
+}
+.main-content .user-head p {
+  font-weight: bolder;
+  font-size: 20px;
+}
+
+.main-content .table-content {
+  /* border: 1px solid red; */
+  padding: 0 2rem 0 2rem;
+}
+
+.modal-width {
+  border: 1px solid rgb(42, 19, 133);
+  max-width: 1000px !important;
+  width: 1000px !important;
+  margin: 1.75rem auto;
+}
+
+.modal-dialog .modal-content {
+  /* border: 1px solid red; */
+  background-color: rgb(119, 143, 229);
+}
+.modal-body {
+  /* border: 1px solid red; */
+  background-color: white;
+}
+
+.modal-body .two-content {
+  /* border: 1px solid red; */
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1rem;
+}
+
+.two-content .field {
+  display: flex;
+  /* grid-template-columns: 150px 300px; */
+  gap: 5px;
+  flex-direction: column;
+  /* border: 1px solid red; */
+  font-size: 18px;
+  color: rgb(93, 92, 92);
+}
+
+.modal-body .two-content .field label {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.modal-footers {
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-toast{
+  /* margin-top: 1rem; */
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.style-toast{
+  /* border: 1px solid red; */
+  margin-top:1rem ;
+  top: 0.2rem;
+   z-index: 99;
+}
