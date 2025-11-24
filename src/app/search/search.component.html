@@ -1,0 +1,106 @@
+<div class="main-toast">
+  <div
+    class="toast position-fixed top-0 end-0 m-3 index-4 style-toast"
+    role="alert"
+    [class.show]="showToast"
+  >
+    <div
+      class="toast-header bg-success text-white"
+      [ngClass]="{
+        'bg-success': toastType === 'success'
+      }"
+    >
+      <strong class="me-auto text-center">{{ toastMessage }}</strong>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="btn btn-secondary mb-3" (click)="toggleMore()">
+  {{ toggleAdvanced ? 'ซ่อนการค้นหาเพิ่มเติม' : 'ค้นหาเพิ่มเติม' }} <i class="fa fa-caret-down"></i>
+</button>
+
+<div class="mb-4 slide-box"  *ngIf="toggleAdvanced">
+  <form action="" (ngSubmit)="search()">
+    <div class="form-main">
+      <div class="field">
+        <label for="">รหัสผู้ใช้งาน :</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchModel.userPass"
+          name="userPass"
+          placeholder="ใส่รหัสผู้ใช้งาน"
+        />
+      </div>
+      <div class="field">
+        <label for="">ชื่อ-นามสกุล :</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchModel.nameFull"
+          name="nameFull"
+          placeholder="ใส่ชื่อหรือ นามสกุล"
+        />
+      </div>
+      <div class="field">
+        <label for="">อายุ :</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchModel.age"
+          name="age"
+          placeholder="ใส่อายุผู้ใช้งาน"
+        />
+      </div>
+      <div class="field">
+        <label>วันเกิด</label>
+        <input
+          name="birthday"
+          [(ngModel)]="searchModel.birthday"
+          type="text"
+          placeholder="DD/MM/YYYY"
+          class="form-control"
+          bsDatepicker
+        />
+      </div>
+      <div class="field full">
+        <label>เพศ</label>
+        <select
+          class="form-control"
+          [(ngModel)]="searchModel.gender"
+          name="gender"
+        >
+          <option value="" disabled selected>กรุณาเลือกเพศ</option>
+          <option value="ชาย">ชาย</option>
+          <option value="หญิง">หญิง</option>
+          <option value="ไม่ระบุ">ไม่ระบุ</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="">วันที่บันทึก :</label>
+        <input
+          type="text"
+          placeholder="DD/MM/YYYY"
+          class="form-control"
+          bsDatepicker
+          [(ngModel)]="searchModel.createDate"
+          name="createDate"
+        />
+      </div>
+      <div class="field full">
+        <label for="">บันทึกโดย :</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchModel.createBy"
+          name="createBy"
+          placeholder="บันทึกโดย"
+        />
+      </div>
+    </div>  
+    <div class="form-button">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <button type="button" class="btn btn-danger ml-3  " (click)="clear()">Clear</button>
+    </div>
+  </form>
+</div>

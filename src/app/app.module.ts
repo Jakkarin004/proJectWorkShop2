@@ -15,9 +15,12 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AgeDatePipe } from './pipe/age-date.pipe';
+import { HttpClientModule } from '@angular/common/http';
 
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { thBeLocale } from 'ngx-bootstrap/locale';
+import { SearchComponent } from './search/search.component';
+import { ChartComponent } from './chart/chart.component';
 defineLocale('th', thBeLocale); // <-- กำหนด locale ไทย
 
 @NgModule({
@@ -27,6 +30,8 @@ defineLocale('th', thBeLocale); // <-- กำหนด locale ไทย
     ContentComponent,
     RunTimePipe,
     AgeDatePipe,
+    SearchComponent,
+    ChartComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,6 +42,7 @@ defineLocale('th', thBeLocale); // <-- กำหนด locale ไทย
     NzTableModule,
     NzTagModule,
     ModalModule,
+    HttpClientModule//เอาไว้เรียก API
   ],
   providers: [
     ],

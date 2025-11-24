@@ -3,6 +3,8 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { RunTimePipe } from '../pipe/run-time.pipe';
 import { AgeDatePipe } from '../pipe/age-date.pipe';
 import { NgForm } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { ChartUpdateService } from '../chart-update.service';
 
 @Component({
   selector: 'app-content',
@@ -11,61 +13,55 @@ import { NgForm } from '@angular/forms';
 })
 export class ContentComponent implements OnInit {
 
-  constructor() { }
+  @ViewChild('jakkarin') jakkarin!: ModalDirective;
+  @ViewChild('deleteModal') deleteModal!: ModalDirective;
 
-  showToast: boolean = false;
-  toastMessage: string = '';
-  toastType: 'success' | 'error' | 'edit' = 'success'; // เก็บประเภท toast
-
-  showSuccess(message: string) {
-    this.toastMessage = message;
-    this.toastType = 'success';
-    this.showToast = true;
-    setTimeout(() => this.showToast = false, 2000);
-  }
-  showError(message: string) {
-    this.toastMessage = message;
-    this.toastType = 'error';
-    this.showToast = true;
-    setTimeout(() => this.showToast = false, 2000);
-  }
-  showEdit(message: string) {
-    this.toastMessage = message;
-    this.toastType = 'edit';
-    this.showToast = true;
-    setTimeout(() => this.showToast = false, 2000);
-  }
-
-  firstName: string = '';
-  lastName: string = '';
-  birth: string = '';
-  age: number = 0;
-  sex: string = '';
-  userName: string = 'jakkarin';
+  dataTest: any[] = [];
+  firstname = '';
+  lastname = '';
+  birthday = '';
+  age = 0;
+  gender = '';
+  createBy = 'jakkarin';
   date1: any;
-  ngOnInit(): void {
-  }
-
-  datalist = [
-    { id: 1, userPass: 1, firstName: 'jakkarin', lastName: 'mueagesong', birth: '02/02/2547', age: 21, sex: 'ชาย', saveTime: '11/11/2568', saveUserBy: 'jakkarin' },
-    { id: 2, userPass: 2, firstName: 'test1', lastName: 'test1', birth: '02/02/2546', age: 22, sex: 'หญิง', saveTime: '11/11/2568', saveUserBy: 'jakkarin' },
-    { id: 3, userPass: 3, firstName: 'test2', lastName: 'test2', birth: '02/02/2545', age: 23, sex: 'ชาย', saveTime: '11/11/2568', saveUserBy: 'jakkarin' },
-    { id: 4, userPass: 4, firstName: 'test3', lastName: 'test3', birth: '02/02/2544', age: 24, sex: 'หญิง', saveTime: '12/11/2568', saveUserBy: 'jakkarin' },
-    { id: 5, userPass: 5, firstName: 'test4', lastName: 'test4', birth: '02/02/2543', age: 25, sex: 'ชาย', saveTime: '12/11/2568', saveUserBy: 'jakkarin' },
-  ];
-
-  resetForm() {
-    this.firstName = '';
-    this.lastName = '';
-    this.birth = '';
-    this.age = 0;
-    this.sex = '';
-    this.userName = 'jakkarin';
-    this.date1 = '';
-  }
-
   editingUserId: number | null = null;
-  submitted: boolean = false;
+  submitted = false;
+  userPass: number | null = null;
+  userIdToDelete: number | null = null;
+
+  showToast = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'edit' = 'success';
+
+  constructor(private http: HttpClient, private chartUpdate:ChartUpdateService) { }
+
+  ngOnInit(): void {
+    this.callApi();
+  }
+
+  private showToastMessage(message: string, type: 'success' | 'error' | 'edit') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 2000);
+  }
+
+  showSuccess(message: string) { this.showToastMessage(message, 'success'); }
+  showError(message: string) { this.showToastMessage(message, 'error'); }
+  showEdit(message: string) { this.showToastMessage(message, 'edit'); }
+
+  //api
+  callApi() {
+    this.http.get<any[]>('http://localhost:8778/Tahn-controller/get-data')
+      .toPromise()
+      .then(res => this.dataTest = res)
+      .catch(err => console.error('Load data error:', err));
+  }
+
+  updateTable(result: any[]) {
+    this.dataTest = result;  // อัปเดตตารางให้เป็นผลลัพธ์การค้นหา
+  }
+
   saveUser(form: NgForm) {
 
     this.submitted = true;
@@ -76,39 +72,61 @@ export class ContentComponent implements OnInit {
     const ageDatePipe = new AgeDatePipe();
     const formattedBirth = this.date1 ? runTimePipe.transform(this.date1) : '';
     const formattedAge = this.date1 ? Number(ageDatePipe.transform(this.date1)) : 0;
-    let textToast = '';
 
     if (this.editingUserId !== null) {
-      this.datalist = this.datalist.map(data => {
-        if (data.id === this.editingUserId) {
-          return {
-            ...data,
-            firstName: this.firstName,
-            lastName: this.lastName,
-            birth: formattedBirth,
-            age: formattedAge,
-            sex: this.sex
-          };
-        }
-        return data;
-      });
-      textToast = 'แก้ไขผู้ใช้งานสำเร็จ';
-      this.showEdit(textToast);
+      const updateUser = {
+        ...this.dataTest,
+        userPass: this.userPass,
+        firstname: this.firstname,
+        lastname: this.lastname,
+        birthday: formattedBirth,  // DD/MM/YYYY
+        age: formattedAge,
+        gender: this.gender,
+        createDate: new Date().toISOString(),
+        createBy: this.createBy
+      }
+
+      this.http.put(`http://localhost:8778/Tahn-controller/users/${this.editingUserId}`, updateUser)
+        .toPromise()
+        .then(() => {
+          this.showEdit('แก้ไขผู้ใช้งานสำเร็จ');
+          this.resetForm();
+          this.editingUserId = null;
+          this.jakkarin.hide();
+          // รีโหลดข้อมูลใหม่จาก backend
+          this.callApi();
+          this.chartUpdate.notifyUpdate();//กราฟรีเฟรช
+        })
+        .catch((error) => {
+          console.error('Update error:', error);
+          this.showError('เกิดข้อผิดพลาดในการแก้ไขผู้ใช้งาน');
+        })
     } else {
       const newUser: any = {
-        id: this.datalist.length + 1,
-        userPass:this.datalist.length + 1,
-        firstName: this.firstName,
-        lastName: this.lastName,
-        birth: formattedBirth,
+        userPass: this.dataTest.length + 1,
+        firstname: this.firstname,
+        lastname: this.lastname,
+        birthday: formattedBirth,
         age: formattedAge,
-        sex: this.sex,
-        saveTime: new Date().toLocaleDateString('th-TH'),
-        saveUserBy: this.userName
+        gender: this.gender,
+        createDate: new Date().toISOString(), // "2025-11-22T03:00:00.000Z"
+        createBy: "jakkarin"
       };
-      this.datalist = [...this.datalist, newUser];
-      textToast = 'เพิ่มผู้ใช้งานสำเร็จ';
-      this.showSuccess(textToast);
+      // ส่งข้อมูลไป backend
+      this.http.post('http://localhost:8778/Tahn-controller/save-data', newUser)
+        .toPromise()
+        .then((response: any) => {
+          console.log('Insert response:', response);
+          this.dataTest = [...this.dataTest, response];
+          this.showSuccess('เพิ่มผู้ใช้งานสำเร็จ');
+          // รีโหลดข้อมูลใหม่จาก backend
+          this.callApi();
+          this.chartUpdate.notifyUpdate();//กราฟรีเฟรช
+        })
+        .catch((error) => {
+          console.error('Insert error:', error);
+          this.showError('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้งาน');
+        });
     }
     this.resetForm();
     this.editingUserId = null;
@@ -116,37 +134,30 @@ export class ContentComponent implements OnInit {
     this.submitted = false;
   }
 
-  @ViewChild('jakkarin') jakkarin!: ModalDirective;
+  //modal
   openModal() {
     this.resetForm();
-    this.submitted = false;
-    this.editingUserId = null;
     this.jakkarin.show();
   }
+
   closeModal() {
     this.jakkarin.hide();
     this.resetForm();
-    this.submitted = false;
   }
-
 
   editUser(id: number) {
-    const user = this.datalist.find(u => u.id === id);
+    const user = this.dataTest.find(u => Number(u.id) === id);
     if (!user) return;
 
-    this.firstName = user.firstName;
-    this.lastName = user.lastName;
-    this.sex = user.sex;
-
-    const parts = user.birth.split('/');
-    this.date1 = new Date(+parts[2] - 543, +parts[1] - 1, +parts[0]);
-    this.jakkarin.show();
+    this.userPass = user.userPass;
+    this.firstname = user.firstname;
+    this.lastname = user.lastname;
+    this.gender = user.gender;
+    this.date1 = user.birthday ? new Date(user.birthday) : null;
     this.editingUserId = id;
+    this.jakkarin.show();
   }
 
-  @ViewChild('deleteModal') deleteModal!: ModalDirective;
-
-  userIdToDelete: number | null = null;
   openDeleteModal(id: number) {
     this.userIdToDelete = id;
     this.deleteModal.show();
@@ -159,9 +170,27 @@ export class ContentComponent implements OnInit {
 
   confirmDelete() {
     if (this.userIdToDelete !== null) {
-      this.datalist = this.datalist.filter(u => u.id !== this.userIdToDelete);
+      this.http.delete(`http://localhost:8778/Tahn-controller/delete/${this.userIdToDelete}`)
+        .toPromise()
+        .then(() => {
+          this.showError('ลบผู้ใช้งานสำเร็จ');
+          this.callApi();
+          this.chartUpdate.notifyUpdate();//กราฟรีเฟรช
+        })
+        .catch(err => console.error('Delete error:', err));
     }
     this.closeDeleteModal();
-    this.showError('ลบผู้ใช้งานสำเร็จ');
+  }
+
+  private resetForm() {
+    this.firstname = '';
+    this.lastname = '';
+    this.birthday = '';
+    this.age = 0;
+    this.gender = '';
+    this.createBy = 'jakkarin';
+    this.date1 = null;
+    this.editingUserId = null;
+    this.submitted = false;
   }
 }

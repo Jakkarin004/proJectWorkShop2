@@ -1,0 +1,59 @@
+form{
+    display: grid;
+    grid-column: auto;
+    /* border: 1px solid red; */
+}
+
+form .form-main{
+    /* border: 1px solid red; */
+    display: grid;
+    grid-template-columns: 300px 300px 300px;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+form .form-button{
+    /* border: 1px solid red; */
+    display: grid;
+    grid-template-columns: 150px 150px ;
+    justify-content: center;
+    margin: 0.5rem auto;
+}
+
+.slide-box {
+  overflow: hidden;
+  animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.main-toast{
+  /* margin-top: 1rem; */
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.style-toast{
+  /* border: 1px solid red; */
+  margin-top:1rem ;
+  top: 0.2rem;
+   z-index: 99;
+}

@@ -25,7 +25,8 @@
       <p>-</p>
     </div>
     <div class="table-content">
-      <nz-table #jakkarinTable [nzData]="datalist" nzBordered [nzPageSize]="5">
+      <app-search (onSearch)="updateTable($event)"></app-search>
+      <nz-table #jakkarinTable [nzData]="dataTest" nzBordered [nzPageSize]="5">
         <thead>
           <tr>
             <th class="text-center font-weight-bold">ลำดับ</th>
@@ -52,13 +53,13 @@
             <td class="text-center">{{ i + 1 + (jakkarinTable.nzPageIndex - 1) * jakkarinTable.nzPageSize }}</td>
             <td class="text-center">{{ data.userPass }}</td>
             <td class="text-center">  
-              {{ data.firstName + " " + data.lastName }}
+              {{ data.firstname + " " + data.lastname }}
             </td>
-            <td class="text-center">{{ data.birth }}</td>
+            <td class="text-center">{{ data.birthday | runTime}}</td>
             <td class="text-center">{{ data.age }}</td>
-            <td class="text-center">{{ data.sex }}</td>
-            <td class="text-center">{{ data.saveTime }}</td>
-            <td class="text-center">{{ data.saveUserBy }}</td>
+            <td class="text-center">{{ data.gender }}</td>
+            <td class="text-center">{{ data.createDate | runTime }}</td>
+            <td class="text-center">{{ data.createBy }}</td>
             <td>
               <div class="text-center">
                 <button
@@ -110,12 +111,13 @@
                   <input
                     class="form-control"
                     type="text"
-                    [(ngModel)]="firstName"
-                    name="firstName"
+                    [(ngModel)]="firstname"
+                    name="firstname"
+                    placeholder="กรุณากรอกชื่อ"
                     required
                   />
                   <div
-                    *ngIf="firstName?.length === 0 && submitted"
+                    *ngIf="firstname?.length === 0 && submitted"
                     class="text-danger"
                   >
                     <small>*กรุณากรอกชื่อ</small>
@@ -127,12 +129,13 @@
                   <input
                     class="form-control"
                     type="text"
-                    [(ngModel)]="lastName"
+                    [(ngModel)]="lastname"
                     name="lastName"
+                    placeholder="กรุณากรอกนามสกุล"
                     required
                   />
                   <div
-                    *ngIf="lastName?.length === 0 && submitted"
+                    *ngIf="lastname?.length === 0 && submitted"
                     class="text-danger"
                   >
                     <small>*กรุณากรอกนามสกุล</small>
@@ -142,9 +145,9 @@
                 <div class="field">
                   <label>วันเกิด</label>
                   <input
-                    name="birth"
+                    name="birthday"
                     [(bsValue)]="date1"
-                    [(ngModel)]="birth"
+                    [(ngModel)]="birthday"
                     type="text"
                     placeholder="DD/MM/YYYY"
                     class="form-control"
@@ -152,7 +155,7 @@
                     required
                   />
                   <div
-                    *ngIf="date1?.length === 0 && submitted"
+                    *ngIf="!date1 && submitted"
                     class="text-danger"
                   >
                     <small>*กรุณาเลือกวันเกิด</small>
@@ -175,8 +178,8 @@
                   <label>เพศ</label>
                   <select
                     class="form-control"
-                    [(ngModel)]="sex"
-                    name="sex"
+                    [(ngModel)]="gender"
+                    name="gender"
                     required
                   >
                     <option value="" disabled selected>กรุณาเลือกเพศ</option>
@@ -184,7 +187,7 @@
                     <option value="หญิง">หญิง</option>
                     <option value="ไม่ระบุ">ไม่ระบุ</option>
                   </select>
-                  <div *ngIf="!sex && submitted" class="text-danger">
+                  <div *ngIf="!gender && submitted" class="text-danger">
                   <small>*กรุณาเลือกเพศ</small>
                 </div>
                 </div>
@@ -242,4 +245,6 @@
       </div>
     </div>
   </div>
+  <app-chart></app-chart>
 </div>
+
