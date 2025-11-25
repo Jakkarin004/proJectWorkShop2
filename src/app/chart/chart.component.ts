@@ -12,14 +12,14 @@ export class ChartComponent implements OnInit {
 
   genderData: { male: number, female: number, unspecified: number } = { male: 0, female: 0, unspecified: 0 };
   chartInstance!: echarts.ECharts;
-
+  
   constructor(private http: HttpClient, private chartUpdate: ChartUpdateService) { }
 
   ngOnInit(): void {
     this.fetchData();
 
     this.chartUpdate.chartUpdate$.subscribe(() => {
-      this.fetchData();     // รีโหลดข้อมูลใหม่
+      this.fetchData();// รีโหลดข้อมูลใหม่
     });
   }
 
@@ -38,11 +38,9 @@ export class ChartComponent implements OnInit {
       });
   }
 
-
   initChart() {
     const chartDom = document.getElementById('genderChart')!;
     this.chartInstance = echarts.init(chartDom);
-
     this.updateChart();
     window.addEventListener('resize', () => this.chartInstance.resize());
   }
@@ -55,9 +53,8 @@ export class ChartComponent implements OnInit {
         {
           name: 'จำนวนผู้ใช้งาน',
           type: 'pie',
-          radius: ['40%', '70%'],
           avoidLabelOverlap: false,
-          label: { show: true, position: 'outside', formatter: '{b}: {c} ({d}%)' },
+          label: { show: true, position: 'outside', formatter: '{b}: {c} ' },
           labelLine: { show: true },
           data: [
             { value: this.genderData.male, name: 'ชาย' },
@@ -69,37 +66,4 @@ export class ChartComponent implements OnInit {
     };
     this.chartInstance.setOption(option);
   }
-
-  // updateChart() {
-  //   const option = {
-  //     tooltip: {
-  //       trigger: 'axis'
-  //     },
-  //     xAxis: {
-  //       type: 'category',
-  //       data: ['ชาย', 'หญิง', 'ไม่ระบุ']
-  //     },
-  //     yAxis: {
-  //       type: 'value'
-  //     },
-  //     series: [
-  //       {
-  //         name: 'จำนวนผู้ใช้งาน',
-  //         type: 'bar',
-  //         data: [
-  //           this.genderData.male,
-  //           this.genderData.female,
-  //           this.genderData.unspecified
-  //         ],
-  //         label: {
-  //           show: true,
-  //           position: 'top'
-  //         }
-  //       }
-  //     ]
-  //   };
-
-  //   this.chartInstance.setOption(option);
-  // }
-
 }

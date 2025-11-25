@@ -8,10 +8,8 @@ export class ChartUpdateService {
   private  chartUpdateSource = new Subject<void>();
   chartUpdate$ = this.chartUpdateSource.asObservable();
 
-  constructor() { } 
+  constructor() {} 
   notifyUpdate(){
     this.chartUpdateSource.next();
   }
-
-  
 }

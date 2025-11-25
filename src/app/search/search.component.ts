@@ -10,13 +10,16 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 })
 export class SearchComponent implements OnInit {
 
-  toggleAdvanced = false;
-
+  toggleHide = false;
   showToast = false;
   toastMessage = '';
-  toastType: 'success' | 'error' | 'edit' = 'success';
+  toastType  = 'success';
 
   @Output() onSearch = new EventEmitter<any>();
+
+  toggleMore() {
+    this.toggleHide = !this.toggleHide;
+  }
 
   searchModel = {
     userPass: '',
@@ -30,6 +33,10 @@ export class SearchComponent implements OnInit {
     createBy: ''
   };
 
+  constructor(private http: HttpClient) { }
+
+  ngOnInit(): void {}
+
    private showToastMessage(message: string, type: 'success') {
     this.toastMessage = message;
     this.toastType = type;
@@ -39,16 +46,7 @@ export class SearchComponent implements OnInit {
 
   showSuccess(message: string) { this.showToastMessage(message, 'success'); }
 
-
-  constructor(private http: HttpClient) { }
-
-  ngOnInit(): void {
-  }
-
-  
-
   search() {
-
     const formattedBirthday = this.searchModel.birthday
       ? formatDate(this.searchModel.birthday, 'yyyy-MM-dd', 'en')
       : '';
@@ -67,7 +65,7 @@ export class SearchComponent implements OnInit {
       .subscribe(res => {
         this.onSearch.emit(res); // ส่งกลับไปที่ content component
       });
-    
+
      this.showSuccess('ค้นหาเสร็จสิ้น');
   }
 
@@ -90,11 +88,4 @@ export class SearchComponent implements OnInit {
 
     this.showSuccess('เคลียร์ข้อมูลเสร็จสิ้น');
   }
-
-  toggleMore() {
-    this.toggleAdvanced = !this.toggleAdvanced;
-  }
-
-
-
 }

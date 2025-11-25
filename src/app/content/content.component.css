@@ -1,13 +1,15 @@
 .main-bg{
   /* border: 1px solid red; */
-  background-color: rgb(64, 63, 63,.1);
+  background-color: rgba(121, 118, 118, 0.2);
 }
 .main-content {
   /* border: 1px solid red; */
   margin: 1rem;
   padding: 1rem;
-  box-shadow: 0px 4px 2px rgb(88, 210, 251) inset;
+  /* box-shadow: 0px 4px 2px rgb(88, 210, 251) inset; */
   background-color: white;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px 2px rgba(0,0,0,0.1);
 }
 .main-content .user-head {
   /* border: 1px solid red; */
@@ -28,7 +30,7 @@
 }
 
 .modal-width {
-  border: 1px solid rgb(42, 19, 133);
+  /* border: 1px solid rgb(42, 19, 133); */
   max-width: 1000px !important;
   width: 1000px !important;
   margin: 1.75rem auto;
@@ -86,4 +88,11 @@
   margin-top:1rem ;
   top: 0.2rem;
    z-index: 99;
+}
+
+.bar-main{
+   /* border: 1px solid red; */
+   display: grid;
+   grid-template-columns: 600px 600px;
+   gap: 1rem;
 }

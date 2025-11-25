@@ -15,45 +15,48 @@
   </div>
 </div>
 
-<button type="button" class="btn btn-secondary mb-3" (click)="toggleMore()">
-  {{ toggleAdvanced ? 'ซ่อนการค้นหาเพิ่มเติม' : 'ค้นหาเพิ่มเติม' }} <i class="fa fa-caret-down"></i>
+<button type="button" class="btn btn-outline-secondary mb-3" (click)="toggleMore()">
+  {{ toggleHide ? 'ซ่อนการค้นหาเพิ่มเติม' : 'ค้นหาเพิ่มเติม' }} <i class="fa fa-caret-down"></i>
 </button>
 
-<div class="mb-4 slide-box"  *ngIf="toggleAdvanced">
+<div class="mb-4 slide-box"  *ngIf="toggleHide">
   <form action="" (ngSubmit)="search()">
+    <div class="form-search">
+      <h3 class="font-weight-bold fst-italic ">Search User</h3>
+    </div>
     <div class="form-main">
       <div class="field">
-        <label for="">รหัสผู้ใช้งาน :</label>
+        <label for="" class="font-weight-bold">รหัสผู้ใช้งาน :</label>
         <input
           type="text"
           class="form-control"
           [(ngModel)]="searchModel.userPass"
           name="userPass"
-          placeholder="ใส่รหัสผู้ใช้งาน"
+          placeholder="ป้อนรหัสผู้ใช้งาน"
         />
       </div>
       <div class="field">
-        <label for="">ชื่อ-นามสกุล :</label>
+        <label for="" class="font-weight-bold">ชื่อ-นามสกุล :</label>
         <input
           type="text"
           class="form-control"
           [(ngModel)]="searchModel.nameFull"
           name="nameFull"
-          placeholder="ใส่ชื่อหรือ นามสกุล"
+          placeholder="ป้อนชื่อหรือ นามสกุล"
         />
       </div>
       <div class="field">
-        <label for="">อายุ :</label>
+        <label for="" class="font-weight-bold">อายุ :</label>
         <input
           type="text"
           class="form-control"
           [(ngModel)]="searchModel.age"
           name="age"
-          placeholder="ใส่อายุผู้ใช้งาน"
+          placeholder="ป้อนอายุผู้ใช้งาน"
         />
       </div>
       <div class="field">
-        <label>วันเกิด</label>
+        <label class="font-weight-bold">วันเกิด :</label>
         <input
           name="birthday"
           [(ngModel)]="searchModel.birthday"
@@ -64,7 +67,7 @@
         />
       </div>
       <div class="field full">
-        <label>เพศ</label>
+        <label class="font-weight-bold">เพศ :</label>
         <select
           class="form-control"
           [(ngModel)]="searchModel.gender"
@@ -77,7 +80,7 @@
         </select>
       </div>
       <div class="field full">
-        <label for="">วันที่บันทึก :</label>
+        <label for="" class="font-weight-bold">วันที่บันทึก :</label>
         <input
           type="text"
           placeholder="DD/MM/YYYY"
@@ -88,7 +91,7 @@
         />
       </div>
       <div class="field full">
-        <label for="">บันทึกโดย :</label>
+        <label for="" class="font-weight-bold">บันทึกโดย :</label>
         <input
           type="text"
           class="form-control"
@@ -99,8 +102,8 @@
       </div>
     </div>  
     <div class="form-button">
-      <button type="submit" class="btn btn-primary">Search</button>
-      <button type="button" class="btn btn-danger ml-3  " (click)="clear()">Clear</button>
+      <button type="submit" class="btn btn-outline-primary">ค้นหา</button>
+      <button type="button" class="btn btn-outline-danger ml-3" (click)="clear()">ล้างค่า</button>
     </div>
   </form>
 </div>

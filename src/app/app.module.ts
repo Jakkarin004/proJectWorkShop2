@@ -21,6 +21,7 @@ import { defineLocale } from 'ngx-bootstrap/chronos';
 import { thBeLocale } from 'ngx-bootstrap/locale';
 import { SearchComponent } from './search/search.component';
 import { ChartComponent } from './chart/chart.component';
+import { BarChartComponent } from './bar-chart/bar-chart.component';
 defineLocale('th', thBeLocale); // <-- กำหนด locale ไทย
 
 @NgModule({
@@ -32,6 +33,7 @@ defineLocale('th', thBeLocale); // <-- กำหนด locale ไทย
     AgeDatePipe,
     SearchComponent,
     ChartComponent,
+    BarChartComponent,
   ],
   imports: [
     BrowserModule,

@@ -22,6 +22,7 @@ export class ContentComponent implements OnInit {
   birthday = '';
   age = 0;
   gender = '';
+  createDate = '';
   createBy = 'jakkarin';
   date1: any;
   editingUserId: number | null = null;
@@ -58,8 +59,8 @@ export class ContentComponent implements OnInit {
       .catch(err => console.error('Load data error:', err));
   }
 
-  updateTable(result: any[]) {
-    this.dataTest = result;  // อัปเดตตารางให้เป็นผลลัพธ์การค้นหา
+  updateTable(res: any[]) {
+    this.dataTest = res;  // อัปเดตตารางให้เป็นผลลัพธ์การค้นหา
   }
 
   saveUser(form: NgForm) {
@@ -68,6 +69,12 @@ export class ContentComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+
+    //ป้องกัน รหัสผู้ใช้งานซ้ำ
+    const maxUserPass = Math.max(...this.dataTest.map(u => u.userPass), 0);
+    const newUserPass = maxUserPass + 1;
+
+    //แปลงค่า pipe ก่อนนำข้อมูลไปใช้งาน
     const runTimePipe = new RunTimePipe();
     const ageDatePipe = new AgeDatePipe();
     const formattedBirth = this.date1 ? runTimePipe.transform(this.date1) : '';
@@ -79,10 +86,10 @@ export class ContentComponent implements OnInit {
         userPass: this.userPass,
         firstname: this.firstname,
         lastname: this.lastname,
-        birthday: formattedBirth,  // DD/MM/YYYY
+        birthday: formattedBirth,
         age: formattedAge,
         gender: this.gender,
-        createDate: new Date().toISOString(),
+        createDate: this.createDate,
         createBy: this.createBy
       }
 
@@ -103,13 +110,12 @@ export class ContentComponent implements OnInit {
         })
     } else {
       const newUser: any = {
-        userPass: this.dataTest.length + 1,
+        userPass: newUserPass,
         firstname: this.firstname,
         lastname: this.lastname,
         birthday: formattedBirth,
         age: formattedAge,
         gender: this.gender,
-        createDate: new Date().toISOString(), // "2025-11-22T03:00:00.000Z"
         createBy: "jakkarin"
       };
       // ส่งข้อมูลไป backend
@@ -154,12 +160,16 @@ export class ContentComponent implements OnInit {
     this.lastname = user.lastname;
     this.gender = user.gender;
     this.date1 = user.birthday ? new Date(user.birthday) : null;
+    this.createDate = user.createDate;
     this.editingUserId = id;
     this.jakkarin.show();
   }
 
   openDeleteModal(id: number) {
     this.userIdToDelete = id;
+    const user = this.dataTest.find(u => Number(u.id) === id);
+    this.firstname = user.firstname;
+    this.lastname = user.lastname;
     this.deleteModal.show();
   }
 
