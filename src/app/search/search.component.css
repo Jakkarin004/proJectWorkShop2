@@ -69,5 +69,33 @@ form .form-button{
   /* border: 1px solid red; */
   margin-top:1rem ;
   top: 0.2rem;
-   z-index: 99;
+  z-index: 99;
+}
+
+
+.btn-gradient {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  transition: transform 0.2s;
+}
+
+.btn-gradient-red {
+  background: linear-gradient(45deg, #e70b0b, #ee8c0b);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  transition: transform 0.7s;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #2d025c, #005eff);
+}
+.btn-gradient-red:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #940101, #ff9100);
 }

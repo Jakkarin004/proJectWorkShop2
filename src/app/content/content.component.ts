@@ -5,6 +5,7 @@ import { AgeDatePipe } from '../pipe/age-date.pipe';
 import { NgForm } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ChartUpdateService } from '../chart-update.service';
+import { TahnService } from '../services/tahn.service';
 
 @Component({
   selector: 'app-content',
@@ -34,7 +35,7 @@ export class ContentComponent implements OnInit {
   toastMessage = '';
   toastType: 'success' | 'error' | 'edit' = 'success';
 
-  constructor(private http: HttpClient, private chartUpdate:ChartUpdateService) { }
+  constructor(private http: HttpClient, private chartUpdate: ChartUpdateService, private tahnService: TahnService) { }
 
   ngOnInit(): void {
     this.callApi();
@@ -53,10 +54,10 @@ export class ContentComponent implements OnInit {
 
   //api
   callApi() {
-    this.http.get<any[]>('http://localhost:8778/Tahn-controller/get-data')
-      .toPromise()
-      .then(res => this.dataTest = res)
-      .catch(err => console.error('Load data error:', err));
+    this.tahnService.getData().subscribe({
+      next: res => this.dataTest = res,
+      error: err => console.error('Load data error:', err)
+    });
   }
 
   updateTable(res: any[]) {
@@ -93,21 +94,21 @@ export class ContentComponent implements OnInit {
         createBy: this.createBy
       }
 
-      this.http.put(`http://localhost:8778/Tahn-controller/users/${this.editingUserId}`, updateUser)
-        .toPromise()
-        .then(() => {
+      this.tahnService.updateUser(this.editingUserId, updateUser).subscribe({
+        next: () => {
           this.showEdit('แก้ไขผู้ใช้งานสำเร็จ');
           this.resetForm();
           this.editingUserId = null;
           this.jakkarin.hide();
           // รีโหลดข้อมูลใหม่จาก backend
           this.callApi();
-          this.chartUpdate.notifyUpdate();//กราฟรีเฟรช
-        })
-        .catch((error) => {
+          this.chartUpdate.notifyUpdate(); // กราฟรีเฟรช
+        },
+        error: (error) => {
           console.error('Update error:', error);
           this.showError('เกิดข้อผิดพลาดในการแก้ไขผู้ใช้งาน');
-        })
+        }
+      });
     } else {
       const newUser: any = {
         userPass: newUserPass,
@@ -118,21 +119,20 @@ export class ContentComponent implements OnInit {
         gender: this.gender,
         createBy: "jakkarin"
       };
-      // ส่งข้อมูลไป backend
-      this.http.post('http://localhost:8778/Tahn-controller/save-data', newUser)
-        .toPromise()
-        .then((response: any) => {
+      this.tahnService.saveData(newUser).subscribe({
+        next: (response) => {
           console.log('Insert response:', response);
           this.dataTest = [...this.dataTest, response];
           this.showSuccess('เพิ่มผู้ใช้งานสำเร็จ');
           // รีโหลดข้อมูลใหม่จาก backend
           this.callApi();
           this.chartUpdate.notifyUpdate();//กราฟรีเฟรช
-        })
-        .catch((error) => {
-          console.error('Insert error:', error);
+        },
+        error: (error) => {
+          console.error('Update error:', error);
           this.showError('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้งาน');
-        });
+        }
+      });
     }
     this.resetForm();
     this.editingUserId = null;
@@ -154,7 +154,6 @@ export class ContentComponent implements OnInit {
   editUser(id: number) {
     const user = this.dataTest.find(u => Number(u.id) === id);
     if (!user) return;
-
     this.userPass = user.userPass;
     this.firstname = user.firstname;
     this.lastname = user.lastname;
@@ -180,16 +179,20 @@ export class ContentComponent implements OnInit {
 
   confirmDelete() {
     if (this.userIdToDelete !== null) {
-      this.http.delete(`http://localhost:8778/Tahn-controller/delete/${this.userIdToDelete}`)
-        .toPromise()
-        .then(() => {
+      this.tahnService.deleteData(this.userIdToDelete).subscribe({
+        next: () => {
           this.showError('ลบผู้ใช้งานสำเร็จ');
           this.callApi();
-          this.chartUpdate.notifyUpdate();//กราฟรีเฟรช
-        })
-        .catch(err => console.error('Delete error:', err));
+          this.chartUpdate.notifyUpdate();// รีเฟรชกราฟ
+          this.closeDeleteModal();// ปิด modal หลัง delete สำเร็จ
+        },
+        error: (error) => {
+          console.error('Update error:', error);
+          this.showError('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้งาน');
+        }
+      });
+      this.closeDeleteModal();
     }
-    this.closeDeleteModal();
   }
 
   private resetForm() {

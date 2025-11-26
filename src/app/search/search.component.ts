@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { TahnService } from '../services/tahn.service';
 
 
 @Component({
@@ -13,7 +14,7 @@ export class SearchComponent implements OnInit {
   toggleHide = false;
   showToast = false;
   toastMessage = '';
-  toastType  = 'success';
+  toastType = 'success';
 
   @Output() onSearch = new EventEmitter<any>();
 
@@ -33,11 +34,11 @@ export class SearchComponent implements OnInit {
     createBy: ''
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private tahnService: TahnService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
-   private showToastMessage(message: string, type: 'success') {
+  private showToastMessage(message: string, type: 'success') {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
@@ -61,12 +62,15 @@ export class SearchComponent implements OnInit {
       createDate: formattedCreateDate
     };
 
-    this.http.get<any[]>('http://localhost:8778/Tahn-controller/get-data-find-user', { params })
-      .subscribe(res => {
+    this.tahnService.getDataUser(params).subscribe({
+      next: (res) => {
         this.onSearch.emit(res); // ส่งกลับไปที่ content component
-      });
-
-     this.showSuccess('ค้นหาเสร็จสิ้น');
+        this.showSuccess('ค้นหาเสร็จสิ้น');
+      },
+      error: (error) => {
+        console.error('มีปัญหาในการค้นหาข้อมูลผู้ใช้งาน', error);
+      }
+    })
   }
 
   clear() {
@@ -83,8 +87,11 @@ export class SearchComponent implements OnInit {
     };
 
     // โหลดข้อมูลทั้งหมดจาก backend
-    this.http.get<any[]>('http://localhost:8778/Tahn-controller/get-data')
-      .subscribe(res => this.onSearch.emit(res));
+    this.tahnService.getData().subscribe({
+      next: (res) =>{
+        this.onSearch.emit(res)
+      }
+    })
 
     this.showSuccess('เคลียร์ข้อมูลเสร็จสิ้น');
   }
